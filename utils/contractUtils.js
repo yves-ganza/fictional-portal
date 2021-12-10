@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import ABI from './VibinPortal.json'
 
-const address = process.env.CONTRACT_ADDRESS
+const address = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const abi = ABI.abi
 
 function checkNetwork(){
