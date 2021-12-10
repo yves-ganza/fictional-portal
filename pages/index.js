@@ -19,7 +19,8 @@ export default function Home() {
     try{
       const walletConnected = await connectWallet()
       if(!walletConnected) return
-  
+      setAccount(walletConnected)
+      
       const userRegistered = await hasJoined()
       if(!userRegistered) return
       setRegistered(userRegistered)
@@ -35,7 +36,7 @@ export default function Home() {
 
   useEffect(() => {
     load()
-  }, [status])
+  }, [])
 
   if(status){
     return <Alert status={status} setStatus={setStatus} />
@@ -44,7 +45,7 @@ export default function Home() {
   return (
     <>
         {
-          !registered ? <Register setRegistered={setRegistered} setStatus={setStatus} account={account}/> :
+          !registered ? <Register setRegistered={setRegistered} setStatus={setStatus} account={account} setAccount={setAccount}/> :
           <>
             <Header account={account} registered={registered} username={username}/>
             <Posts setStatus={setStatus}/>

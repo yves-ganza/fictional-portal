@@ -3,9 +3,9 @@ import React, { useState,useEffect } from "react"
 import { join } from "../../utils/contractUtils"
 
 
-export default function Register({setRegistered, setStatus}){
-    const [account, setAccount] = useState('')
+export default function Register({setRegistered, setStatus, account}){
     const [walletConnected, setWalletConnected] = useState(false)
+    const [address, setAddress] = useState(account)
     const [username, setUsername] = useState('')
 
     const connectWallet = async(ethereum) => {
@@ -16,7 +16,7 @@ export default function Register({setRegistered, setStatus}){
             console.log('Connected to: ', accounts[0])
             setWalletConnected(true)
             setStatus('')
-            setAccount(accounts[0])
+            setAddress(accounts[0])
             return accounts[0]
         }catch(err){
             setWalletConnected(false)
@@ -38,10 +38,9 @@ export default function Register({setRegistered, setStatus}){
         if(accounts.length == 0) return false
 
         setWalletConnected(true)
-        setAccount(accounts[0])
-
-        console.log(`Connected to account: `, accounts[0])
+        setAddress(accounts[0])
         setStatus('')
+        console.log(`Connected to account: `, accounts[0])
         return true
     }
 
@@ -52,12 +51,13 @@ export default function Register({setRegistered, setStatus}){
         if(!connected){
             console.log('No connected account found!')
     
-            const address = await connectWallet(ethereum)
-            if(!address) return
+            const ad = await connectWallet(ethereum)
+            if(!ad) return
     
             setWalletConnected(true)
-            setAccount(address)     
+            setAddress(ad)     
         }
+
         //Ask contract to join
         if(!username){
             setStatus('Error: Please provide a unique username')
@@ -78,13 +78,8 @@ export default function Register({setRegistered, setStatus}){
     const handleChange = (e) => e.preventDefault()
 
     useEffect(() => {
-        let mounted = true
-        mounted && checkWalletConnected()
-
-        return () =>{
-            mounted = false
-        }
-    }, [])
+        checkWalletConnected()
+    }, [address])
 
     return(
         <section className="flex flex-col gap-y-6 items-center w-full min-h-screen lg:flex-row lg:gap-x-16">
@@ -96,7 +91,7 @@ export default function Register({setRegistered, setStatus}){
                 </div>
                 <div>
                     <label className='block text-headline my-2' htmlFor='wallet-ad'>Wallet address</label>
-                    <input id='wallet-ad' className='py-3 pl-4 w-full  bg-gray-700 rounded' onChange={handleChange} value={account} />
+                    <input id='wallet-ad' className='py-3 pl-4 w-full  bg-gray-700 rounded' onChange={handleChange} value={account || address} />
                 </div>
                 <button 
                     className='px-6 py-3 my-6 text-btn hover:animate-pulse  rounded bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700'
