@@ -6,46 +6,49 @@ import Header from '../components/Header'
 import Input from '../components/Input'
 import Posts from '../components/Posts'
 import Register from '../components/Register'
+import Alert from '../components/Alert'
 
 
 export default function Home() {
   const [registered, setRegistered] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const [account, setAccount] = useState()
   const [username, setUsername] = useState()
+  const [status, setStatus] = useState('')
 
-  if(!mounted){
-    hasJoined()
-    .then(bool => {
-      console.log(bool)
-      setRegistered(bool)
-    })
-
-    connectWallet()
-    .then(account => setAccount(account))
-    .catch(err => console.log(err))
-
-    getUser()
-    .then( user => {
+  const preload = async () => {
+    try{
+      const walletConnected = await connectWallet()
+      if(!walletConnected) return
+  
+      const userRegistered = await hasJoined()
+      if(!userRegistered) return
+      setRegistered(userRegistered)
+  
+      const user = await getUser()
+      if(!user) return
       setUsername(user.username)
-    }).catch(err => {
+    }catch(err){
       console.log(err)
-    })
+      setStatus(`Error: ${err.message}`)
+    }
   }
 
   useEffect(() => {
-    setMounted(true)
+    preload()
   }, [])
 
+  if(status){
+    return <Alert status={status} />
+  }
+
+  if(!registered){
+    <Register setRegistered={setRegistered} setStatus={setStatus} account={account}/>
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black px-4 flex flex-col justify-between">
-      {
-        !registered ? <Register setRegistered={setRegistered}/> :
-        <>
-          <Header account={account} joined={registered} username={username}/>
-          <Posts />
-        </>
-      }
-    </div>
+    <>
+      <Header account={account} registered={registered} username={username}/>
+      <Posts setStatus={setStatus}/>
+    </>
   )
 }

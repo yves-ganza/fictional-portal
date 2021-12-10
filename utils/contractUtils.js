@@ -1,15 +1,21 @@
 import { ethers } from 'ethers'
 import ABI from './VibinPortal.json'
 
-const address = process.env.CONTRACT_ADDRESS
+const address = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const abi = ABI.abi
 
+function checkNetwork(){
+    const { ethereum } = window
+
+    if (!ethereum) throw new Error('Ethereum not found!')
+    if (ethereum.chainId !== '0x4') throw new Error('Connect to Rinkeby Network!')
+    console.log(ethereum)
+    return ethereum
+}
+
 export async function join(username) {
-  const { ethereum } = window
-
-  if (!ethereum) return false
-
   try {
+    const ethereum = checkNetwork()
     const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(address, abi, signer)
@@ -20,16 +26,13 @@ export async function join(username) {
     return true
   } catch (err) {
     console.log(err)
-    return false
+    throw new Error(err.message)
   }
 }
 
 export async function hasJoined() {
-  const { ethereum } = window
-
-  if (!ethereum) return false
-
   try {
+    const ethereum = checkNetwork()
     const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(address, abi, signer)
@@ -41,71 +44,70 @@ export async function hasJoined() {
     return hasJoined
   } catch (err) {
     console.log(err)
-    return false
+    throw new Error(err.message)
   }
 }
 
 export async function getUser() {
-  console.log('getting user ...')
-  const { ethereum } = window
-
-  if (!ethereum) throw new Error('Ethereum not found!')
-
   try {
+    const ethereum = checkNetwork()
     const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(address, abi, signer)
 
     const user = await contract.getUser()
-
     console.log(user)
     return user
+
   } catch (err) {
-    throw new Error(err)
+    throw new Error(err.message)
   }
 }
 
 export async function sendMessage(message) {
-  const { ethereum } = window
-
-  if (!ethereum) throw new Error('Ethereum not found!')
-
-  const provider = new ethers.providers.Web3Provider(ethereum)
-  const signer = provider.getSigner()
-
-  const contract = new ethers.Contract(address, abi, signer)
-
-  const postTx = await contract.vibe(message)
-  await postTx.wait()
-  return true
+    try {
+        const ethereum = checkNetwork()
+        const provider = new ethers.providers.Web3Provider(ethereum)
+        const signer = provider.getSigner()
+      
+        const contract = new ethers.Contract(address, abi, signer)
+      
+        const postTx = await contract.vibe(message)
+        await postTx.wait()
+        return true
+    }catch(err) {
+        throw new Error(err.message)
+    }
 }
 
 export async function getPosts() {
-  const { ethereum } = window
+    try{
+        const ethereum = checkNetwork()
+        const provider = new ethers.providers.Web3Provider(ethereum)
+        const signer = provider.getSigner()
 
-  if (!ethereum) throw new Error('Ethereum not found!')
+        const contract = new ethers.Contract(address, abi, signer)
 
-  const provider = new ethers.providers.Web3Provider(ethereum)
-  const signer = provider.getSigner()
+        const posts = await contract.getVibes()
 
-  const contract = new ethers.Contract(address, abi, signer)
-
-  const posts = await contract.getVibes()
-
-  return posts
+        return posts
+    }catch(err){
+        throw new Error(err.message)
+    }
 }
 
 export async function connectWallet() {
-  const { ethereum } = window
-
-  if (!ethereum) throw new Error('Ethereum not found!')
-
-  let accounts = await ethereum.request({ method: 'eth_accounts' })
-  console.log('Connected account: ', accounts[0])
-
-  if (accounts.length != 0) return accounts[0]
-
-  accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-  console.log('Connected account: ', accounts[0])
-  return accounts[0]
+    try {
+        const ethereum = checkNetwork()
+        let accounts = await ethereum.request({ method: 'eth_accounts' })
+        console.log('Connected account: ', accounts[0])
+      
+        if (accounts.length != 0) return accounts[0]
+      
+        accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+        console.log('Connected account: ', accounts[0])
+        return accounts[0]
+    }catch(err) {
+        throw new Error(err.message)
+    }
 }
