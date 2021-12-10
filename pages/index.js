@@ -1,80 +1,51 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { Join, hasJoined } from '../utils/contractUtils'
+import {hasJoined, connectWallet, sendMessage, getUser } from '../utils/contractUtils'
 
 import Header from '../components/Header'
 import Input from '../components/Input'
 import Posts from '../components/Posts'
+import Register from '../components/Register'
 
 
 export default function Home() {
-  const [isWalletConnected, setIsWalletConnected] = useState(false)
+  const [registered, setRegistered] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [account, setAccount] = useState()
-  const [auth, setAuth] = useState(false)
-  const [status, setStatus] = useState('')
+  const [username, setUsername] = useState()
 
-  const checkIfJoined = async() => {
-      const joined = await hasJoined()
-      console.log(joined)
-      setAuth(joined)
-  }
+  if(!mounted){
+    hasJoined()
+    .then(bool => {
+      console.log(bool)
+      setRegistered(bool)
+    })
 
-  const handleJoin = async () => {
-    const re = await Join()
-    setAuth(re)
-  }
+    connectWallet()
+    .then(account => setAccount(account))
+    .catch(err => console.log(err))
 
-  const connectWallet = async(ethereum) => {
-    if(!ethereum) setStatus('Ethereum not found!')
-
-    try {
-      const accounts = await ethereum.request({method: 'eth_requestAccounts'})
-      console.log('Connected to: ', accounts[0])
-      setAccount(account[0])
-      setStatus('')
-      await checkIfJoined()
-    }catch(err){
-      setStatus('Failed to connected wallet!')
+    getUser()
+    .then( user => {
+      setUsername(user.username)
+    }).catch(err => {
       console.log(err)
-    }
-  }
-
-  const checkWalletConnected = async () => {
-    const {ethereum} = window
-
-    if(!ethereum){
-      setStatus('Ethereum not found!')
-      return 
-    }
-    const accounts = await ethereum.request({method: 'eth_accounts'})
-
-    if(accounts.length == 0){
-      setStatus('No authorized account found!')
-      console.log('Connecting to an account...')
-      await connectWallet(ethereum)
-      return 
-    }
-
-    checkIfJoined()
-    setIsWalletConnected(true)
-    setAccount(accounts[0])
-    console.log(`Connected to account: `, accounts[0])
-    return setStatus('')
-  }
-
-  const handleInput = (msg) => {
-    console.log(msg)
+    })
   }
 
   useEffect(() => {
-    checkWalletConnected()
+    setMounted(true)
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black">
-      <Header account={account} status={status} joined={auth} onJoin={handleJoin}/>
-      <Input handleSubmit={handleInput}/>
-      <Posts />
+    <div className="min-h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black px-4 flex flex-col justify-between">
+      {
+        !registered ? <Register setRegistered={setRegistered}/> :
+        <>
+          <Header account={account} joined={registered} username={username}/>
+          <Posts />
+        </>
+      }
     </div>
   )
 }
