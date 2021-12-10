@@ -4,8 +4,7 @@ import { join, getUser } from "../../utils/contractUtils"
 
 import Loading from "../Loading"
 
-export default function Register({setRegistered}){
-    const [status, setStatus] = useState('')
+export default function Register({setRegistered, setStatus}){
     const [account, setAccount] = useState('')
     const [walletConnected, setWalletConnected] = useState(false)
     const [username, setUsername] = useState('')
@@ -36,24 +35,13 @@ export default function Register({setRegistered}){
 
         const accounts = await ethereum.request({method: 'eth_accounts'})
 
-        if(accounts.length == 0){
-            // console.log('No connected account found!')
-            // setStatus('Connecting to an account...')
-            
-            // const address = await connectWallet(ethereum)
-            // if(!address) return false
-
-            // setWalletConnected(true)
-            // setAccount(address)
-            return false
-        }
+        if(accounts.length == 0) return false
 
         setWalletConnected(true)
         setAccount(accounts[0])
 
         console.log(`Connected to account: `, accounts[0])
-        setStatus('connected')
-
+        setStatus('')
         return true
     }
 
@@ -63,7 +51,6 @@ export default function Register({setRegistered}){
 
         if(!connected){
             console.log('No connected account found!')
-            setStatus('Connecting to an account...')
     
             const address = await connectWallet(ethereum)
             if(!address) return
@@ -78,26 +65,29 @@ export default function Register({setRegistered}){
         }
 
         try{
-            setStatus('loading')
-            const success= await join(username)
+            setStatus('Registering: Please wait...')
+            const success = await join(username)
             setStatus('Joined')
             setRegistered(true)            
         }
         catch(err){
-            console.log(err)
-            setStatus('Operation failed!')
+            setStatus(`Error: ${err.message}`)
         }
     }
 
     const handleChange = (e) => e.preventDefault()
 
     useEffect(() => {
-        checkWalletConnected()
+        let mounted = true
+        mounted && checkWalletConnected()
+
+        return () =>{
+            mounted = false
+        }
     }, [])
 
     return(
         <section className="flex flex-col gap-y-6 items-center w-full min-h-screen lg:flex-row">
-            {status === 'loading' ? <Loading /> : ''}
             <header className='text-headline text-center mt-12 lg:mt-0 lg:px-6 text-4xl font-bold lg:text-6xl'>Join Fictional Portal</header>
             <form className='bg-black bg-opacity-25 backdrop-filter backdrop-blur w-full sm:max-w-lg flex flex-col gap-4 pt-12 rounded px-4 text-primary md:min-w-primary' onSubmit={register}>
                 <div>
@@ -110,7 +100,7 @@ export default function Register({setRegistered}){
                 </div>
                 <button 
                     className='px-6 py-3 my-6 text-btn hover:animate-pulse  rounded bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700'
-                    onClick={register}
+                    onClick={(e) => register(e)}
                 >Join</button>
             </form>
         </section>

@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 import {sendMessage} from '../../utils/contractUtils'
 
-export default function Input(){
+export default function Input({setStatus}){
     const [state, setState] = useState('')
     const [sent, setSent] = useState(false)
 
@@ -10,14 +10,18 @@ export default function Input(){
         setState(e.target.value)
     }
 
-    const handleSubmit = (e) =>{
-        e.preventDefault()
-        sendMessage(state)
-        .then(res => {
-            setSent(res)
-            console.log(res)
-        })
-        setState('')
+    const handleSubmit = async (e) =>{
+
+        try{
+            setStatus('Posting: Please wait...')
+            const res = await sendMessage(state)
+            setStatus('Posting: Posted!')
+            setState('')
+            setStatus('')
+        }catch(err){
+            setStatus(`Error: ${err.message}`)
+        }
+
     }
     return(
         <div className='max-w-full max-w-3xl mx-auto bottom-4  pr-4  rounded bg-gray-800 flex justify-center items-center'>

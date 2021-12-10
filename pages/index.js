@@ -15,7 +15,7 @@ export default function Home() {
   const [username, setUsername] = useState()
   const [status, setStatus] = useState('')
 
-  const preload = async () => {
+  const load = async () => {
     try{
       const walletConnected = await connectWallet()
       if(!walletConnected) return
@@ -34,21 +34,22 @@ export default function Home() {
   }
 
   useEffect(() => {
-    preload()
-  }, [])
+    load()
+  }, [status])
 
   if(status){
-    return <Alert status={status} />
-  }
-
-  if(!registered){
-    <Register setRegistered={setRegistered} setStatus={setStatus} account={account}/>
+    return <Alert status={status} setStatus={setStatus} />
   }
 
   return (
     <>
-      <Header account={account} registered={registered} username={username}/>
-      <Posts setStatus={setStatus}/>
+        {
+          !registered ? <Register setRegistered={setRegistered} setStatus={setStatus} account={account}/> :
+          <>
+            <Header account={account} registered={registered} username={username}/>
+            <Posts setStatus={setStatus}/>
+          </>
+        }
     </>
   )
 }

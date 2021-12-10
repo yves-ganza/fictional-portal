@@ -22,7 +22,14 @@ export default function Alert(props){
                                         </span>
                                     </h2>
                                     <div className="py-4 lg:mt-0 lg:flex-shrink-0">
-                                        {/* Button */}
+                                        <div className="inline-flex rounded-md shadow">
+                                            <button 
+                                                onClick={() => props.setStatus('')}
+                                                className="py-4 px-6   bg-pink-700 focus:ring-indigo-500 focus:ring-offset-indigo-200  w-full text-headline transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                                            >
+                                                Home
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

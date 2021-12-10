@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react'
 import { hasJoined, getPosts } from '../../utils/contractUtils'
 import Input from '../Input'
 
-export default function Posts(props){
+export default function Posts({setStatus}){
     const [posts, setPosts] = useState([])
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function Posts(props){
                     }
                 </ul>
             }
-            <Input />
+            <Input setStatus={setStatus}/>
         </div>
     )
 }

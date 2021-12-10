@@ -16,7 +16,7 @@ export default function Register({setRegistered, setStatus, account}){
             const accounts = await ethereum.request({method: 'eth_requestAccounts'})
             console.log('Connected to: ', accounts[0])
             setWalletConnected(true)
-            setStatus('connected')
+            setStatus('')
             return accounts[0]
         }catch(err){
             setWalletConnected(false)
@@ -51,7 +51,7 @@ export default function Register({setRegistered, setStatus, account}){
         setAccount(accounts[0])
 
         console.log(`Connected to account: `, accounts[0])
-        setStatus('connected')
+        setStatus('')
 
         return true
     }
@@ -60,7 +60,7 @@ export default function Register({setRegistered, setStatus, account}){
         e.preventDefault()
 
         if(!account){
-            setStatus('Info :Connecting to an account...')
+            setStatus('Info: Connecting to an account...')
             const address = await connectWallet(ethereum)
             
             if(address){
@@ -73,7 +73,7 @@ export default function Register({setRegistered, setStatus, account}){
         }
         //Ask contract to join
         if(!username){
-            setStatus('Error: Please provide a username')
+            setStatus('Error: Please provide a unique username')
             return
         }
 

@@ -6,10 +6,11 @@ const abi = ABI.abi
 
 function checkNetwork(){
     const { ethereum } = window
-
     if (!ethereum) throw new Error('Ethereum not found!')
-    if (ethereum.chainId !== '0x4') throw new Error('Connect to Rinkeby Network!')
-    console.log(ethereum)
+
+    const chainId = ethereum.chainId
+    if (chainId !== '0x4') throw new Error('Connect to Rinkeby Network!')
+
     return ethereum
 }
 
@@ -37,6 +38,7 @@ export async function hasJoined() {
     const signer = provider.getSigner()
     const contract = new ethers.Contract(address, abi, signer)
 
+    console.log(contract)
     const hasJoined = await contract.hasJoined()
 
     console.log('User joined: ', hasJoined)
@@ -98,13 +100,8 @@ export async function getPosts() {
 
 export async function connectWallet() {
     try {
-        const ethereum = checkNetwork()
-        let accounts = await ethereum.request({ method: 'eth_accounts' })
-        console.log('Connected account: ', accounts[0])
-      
-        if (accounts.length != 0) return accounts[0]
-      
-        accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+        const ethereum = checkNetwork()      
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
         console.log('Connected account: ', accounts[0])
         return accounts[0]
     }catch(err) {
