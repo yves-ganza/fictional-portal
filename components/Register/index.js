@@ -1,8 +1,7 @@
 import React, { useState,useEffect } from "react"
 
-import { join, getUser } from "../../utils/contractUtils"
+import { join } from "../../utils/contractUtils"
 
-import Loading from "../Loading"
 
 export default function Register({setRegistered, setStatus}){
     const [account, setAccount] = useState('')
@@ -87,7 +86,7 @@ export default function Register({setRegistered, setStatus}){
     }, [])
 
     return(
-        <section className="flex flex-col gap-y-6 items-center w-full min-h-screen lg:flex-row">
+        <section className="flex flex-col gap-y-6 items-center w-full min-h-screen lg:flex-row lg:gap-x-16">
             <header className='text-headline text-center mt-12 lg:mt-0 lg:px-6 text-4xl font-bold lg:text-6xl'>Join Fictional Portal</header>
             <form className='bg-black bg-opacity-25 backdrop-filter backdrop-blur w-full sm:max-w-lg flex flex-col gap-4 pt-12 rounded px-4 text-primary md:min-w-primary' onSubmit={register}>
                 <div>
