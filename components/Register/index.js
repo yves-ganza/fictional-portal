@@ -15,7 +15,8 @@ export default function Register({setRegistered, setStatus}){
             const accounts = await ethereum.request({method: 'eth_requestAccounts'})
             console.log('Connected to: ', accounts[0])
             setWalletConnected(true)
-            setStatus('connected')
+            setStatus('')
+            setAccount(accounts[0])
             return accounts[0]
         }catch(err){
             setWalletConnected(false)
