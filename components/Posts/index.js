@@ -25,11 +25,12 @@ export default function Posts({setStatus}){
                 <ul>
                     { 
                         posts.map((post, i) => {
-                            const timestamp = post.timestamp.toNumber()
+                            const timestamp = new Date(post.timestamp.toNumber() * 1000).toString()
                             return <li key={i} className='max-w-full'>   
                                         <article className='rounded p-2 md:p-6 mb-4 bg-primary'>
                                             <h3 className='text-headline font-semibold'>{post.username} - <span className='text-primary font-normal '>{timestamp}</span></h3>
-                                            <p className='text-primary'>{post.message}</p>
+                                            <hr/>
+                                            <p className='text-primary mt-4'>{post.message}</p>
                                         </article>
                                     </li>
                         })
