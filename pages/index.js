@@ -43,7 +43,7 @@ export default function Home() {
   }
 
   return (
-    <>
+    <div className='flex flex-col h-screen'>
         {
           !registered ? <Register setRegistered={setRegistered} setStatus={setStatus} account={account} setAccount={setAccount}/> :
           <>
@@ -51,6 +51,6 @@ export default function Home() {
             <Posts setStatus={setStatus}/>
           </>
         }
-    </>
+    </div>
   )
 }

@@ -82,22 +82,26 @@ export default function Register({setRegistered, setStatus, account}){
     }, [address])
 
     return(
-        <section className="flex flex-col gap-y-6 items-center w-full min-h-screen lg:flex-row lg:gap-x-16">
-            <header className='text-headline text-center mt-12 lg:mt-0 lg:px-6 text-4xl font-bold lg:text-6xl'>Join Fictional Portal</header>
-            <form className='bg-black bg-opacity-25 backdrop-filter backdrop-blur w-full sm:max-w-lg flex flex-col gap-4 pt-12 rounded px-4 text-primary md:min-w-primary' onSubmit={register}>
-                <div>
-                    <label className='block text-headline my-2' htmlFor='text-input'>Username</label>
-                    <input id='text-input' className='py-3 pl-4 w-full  bg-gray-700 rounded' type='text' placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)}/>
-                </div>
-                <div>
-                    <label className='block text-headline my-2' htmlFor='wallet-ad'>Wallet address</label>
-                    <input id='wallet-ad' className='py-3 pl-4 w-full  bg-gray-700 rounded' onChange={handleChange} value={account || address} />
-                </div>
-                <button 
-                    className='px-6 py-3 my-6 text-btn hover:animate-pulse  rounded bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700'
-                    onClick={(e) => register(e)}
-                >Join</button>
-            </form>
+        <section className="grid items-center justify-center lg:grid-flow-col lg:auto-cols-max lg:justify-between lg:px-8 w-full max-w-7xl mx-auto h-fixed absolute inset-0 top-1/2 -translate-y-1/2">
+            <div className='text-headline text-center lg:text-left h-full flex items-center mt-12 lg:mt-0 lg:justify-self-start text-4xl font-bold lg:text-6xl'>
+                <header className="lg:-mt-16">Join <span className="lg:block">Fictional Portal</span></header>
+            </div>
+            <div className="lg:place-self-center">
+                <form className='bg-black bg-opacity-25 backdrop-filter backdrop-blur w-full sm:w-96 flex flex-col gap-4 pt-12 rounded px-4 text-primary lg:max-w-primary' onSubmit={register}>
+                    <div>
+                        <label className='block text-headline my-2' htmlFor='text-input'>Username</label>
+                        <input id='text-input' className='block py-3 pl-4 w-full  bg-gray-700 rounded' type='text' placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                    </div>
+                    <div>
+                        <label className='block text-headline my-2' htmlFor='wallet-ad'>Wallet address</label>
+                        <input id='wallet-ad' className='block py-3 pl-4 w-full  bg-gray-700 rounded' onChange={handleChange} value={account || address} />
+                    </div>
+                    <button 
+                        className='px-6 py-3 my-6 text-btn hover:animate-pulse  rounded bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700'
+                        onClick={(e) => register(e)}
+                    >Join</button>
+                </form>
+            </div>
         </section>
     )
 }
