@@ -27,7 +27,9 @@ module.exports = {
         '1/4': '25vh'
       },
       height: {
-        'fixed': '640px'
+        'fixed': '640px',
+        'header': '100px',
+        'main': 'calc(100% - 100px)'
       }
     },
   },
