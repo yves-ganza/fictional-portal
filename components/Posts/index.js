@@ -22,7 +22,7 @@ export default function Posts({setStatus}){
             {
                 posts.length < 1 ?
                 <h2 className='rounded px-6 py-5 bg-primary text-headline font-semibold'>No posts yet, be the first!</h2> :
-                <ul className='flex justify-center items-center'>
+                <ul className='grid place-content-center'>
                     { 
                         posts.map((post, i) => {
                             const timestamp = new Date(post.timestamp.toNumber() * 1000).toString()

@@ -24,7 +24,10 @@ module.exports = {
       minHeight: {
         '1/2': '50vh',
         '3/4': '75vh',
-        '1/4': '25vh',
+        '1/4': '25vh'
+      },
+      height: {
+        'fixed': '640px'
       }
     },
   },
