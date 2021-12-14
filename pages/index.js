@@ -13,7 +13,7 @@ export default function Home() {
   const [registered, setRegistered] = useState(false)
   const [account, setAccount] = useState()
   const [username, setUsername] = useState()
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('Loading: Please wait...')
 
   const load = async () => {
     try{
@@ -28,6 +28,7 @@ export default function Home() {
       const user = await getUser()
       if(!user) return
       setUsername(user.username)
+      if(status === 'Loading: Please wait...') setStatus('')
     }catch(err){
       console.log(err)
       setStatus(`Error: ${err.message}`)
@@ -43,13 +44,11 @@ export default function Home() {
   }
 
   return (
-    <div className='flex flex-col h-screen'>
+    <div className='h-full max-h-screen md:pt-8 overflow-y-auto md:min-w-[640px]'>
         {
-          !registered ? <Register setRegistered={setRegistered} setStatus={setStatus} account={account} setAccount={setAccount}/> :
-          <>
-            <Header account={account} registered={registered} username={username}/>
-            <Posts setStatus={setStatus}/>
-          </>
+          !registered ? 
+          <Register setRegistered={setRegistered} setStatus={setStatus} account={account} setAccount={setAccount}/> :
+          <Posts setStatus={setStatus}/>
         }
     </div>
   )

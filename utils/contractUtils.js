@@ -9,7 +9,10 @@ function checkNetwork(){
     if (!ethereum) throw new Error('Ethereum not found!')
 
     const chainId = ethereum.chainId
-    if (chainId !== '0x4') throw new Error('Connect to Rinkeby Network!')
+    if (chainId !== '0x4'){
+      console.log(ethereum)
+      throw new Error('Connect to Rinkeby Network!')
+    }
 
     return ethereum
 }
