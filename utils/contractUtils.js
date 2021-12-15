@@ -1,8 +1,10 @@
 import { ethers } from 'ethers'
+
 import ABI from './VibinPortal.json'
 
 const address = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const abi = ABI.abi
+
 
 function checkNetwork(){
     const { ethereum } = window
@@ -17,17 +19,18 @@ function checkNetwork(){
     return ethereum
 }
 
-export async function join(username) {
+export async function join(username, avatar) {
   try {
     const ethereum = checkNetwork()
     const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(address, abi, signer)
 
-    const joinTx = await contract.join(username)
-    await joinTx.wait()
-
+    if(!avatar) return false 
+    const joinTx = await contract.join(username, avatar)
+    await joinTx.wait() 
     return true
+    
   } catch (err) {
     console.log(err)
     throw new Error(err.message)

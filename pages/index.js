@@ -13,6 +13,7 @@ export default function Home() {
   const [registered, setRegistered] = useState(false)
   const [account, setAccount] = useState()
   const [username, setUsername] = useState()
+  const [avatar, setAvatar] = useState()
   const [status, setStatus] = useState('Loading: Please wait...')
 
   const load = async () => {
@@ -22,12 +23,16 @@ export default function Home() {
       setAccount(walletConnected)
       
       const userRegistered = await hasJoined()
-      if(!userRegistered) return
+      if(!userRegistered) {
+        if(status === 'Loading: Please wait...') setStatus('')
+        return
+      }
       setRegistered(userRegistered)
   
       const user = await getUser()
       if(!user) return
       setUsername(user.username)
+      setAvatar(user.profilePic)
       if(status === 'Loading: Please wait...') setStatus('')
     }catch(err){
       console.log(err)
