@@ -1,12 +1,14 @@
 import React, { useState,useEffect } from "react"
 
 import { join } from "../../utils/contractUtils"
-
+import ipfs from '../../utils/db'
 
 export default function Register({setRegistered, setStatus, account}){
     const [walletConnected, setWalletConnected] = useState(false)
     const [address, setAddress] = useState(account)
     const [username, setUsername] = useState('')
+    const [file, setFile] = useState('')
+
 
     const connectWallet = async(ethereum) => {
         if(!ethereum) setStatus('Ethereum not found!')
@@ -66,9 +68,19 @@ export default function Register({setRegistered, setStatus, account}){
 
         try{
             setStatus('Registering: Please wait...')
-            const success = await join(username)
+            if(!file){
+                const fileData = await ipfs.add(file)
+                console.log(fileData)
+                const success = await join(username, {path: '', cid: '', size: ''})
+                setStatus('Joined')
+                setRegistered(true) 
+                return            
+            }                
+            const fileData = await ipfs.add(file)
+            console.log(fileData)
+            const success = await join(username, {path: fileData.path, cid: fileData.cid, size: fileData.size})
             setStatus('Joined')
-            setRegistered(true)            
+            setRegistered(true) 
         }
         catch(err){
             setStatus(`Error: ${err.message}`)
@@ -77,13 +89,18 @@ export default function Register({setRegistered, setStatus, account}){
 
     const handleChange = (e) => e.preventDefault()
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]
+        setFile(file)
+    }
+
     useEffect(() => {
         checkWalletConnected()
     }, [address])
 
     return(
-        <section className="grid items-center justify-center lg:grid-flow-col lg:auto-cols-max lg:justify-between lg:px-8 w-full max-w-7xl mx-auto h-fixed absolute inset-0 top-1/2 -translate-y-1/2">
-            <div className='text-headline text-center lg:text-left h-full flex items-center mt-12 lg:mt-0 lg:justify-self-start text-4xl font-bold lg:text-6xl'>
+        <section className="grid  justify-center lg:grid-flow-col lg:auto-cols-max lg:justify-between lg:px-8 w-full max-w-7xl mx-auto h-fixed">
+            <div className='text-headline text-center lg:text-left h-full justify-center lg:mt-0 lg:justify-self-start text-4xl font-bold lg:text-6xl'>
                 <header className="lg:-mt-16">Join <span className="lg:block">Fictional Portal</span></header>
             </div>
             <div className="lg:place-self-center">
@@ -91,6 +108,10 @@ export default function Register({setRegistered, setStatus, account}){
                     <div>
                         <label className='block text-headline my-2' htmlFor='text-input'>Username</label>
                         <input id='text-input' className='block py-3 pl-4 w-full  bg-gray-700 rounded' type='text' placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                    </div>
+                    <div>
+                        <label className='block text-headline my-2' htmlFor='file-input'>Avatar</label>
+                        <input id='file-input' onChange={handleFileChange} className='block py-3 pl-4 w-full  bg-gray-700 rounded' type='file'/>
                     </div>
                     <div>
                         <label className='block text-headline my-2' htmlFor='wallet-ad'>Wallet address</label>
